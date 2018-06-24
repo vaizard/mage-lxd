@@ -16,11 +16,11 @@
 # a 600s timeout of god knows what. See https://github.com/lxc/lxd/issues/4631
 # for a more detailed description.
 
-- name: Get the lxdfan0 ipv4
-  command: "ifconfig lxdfan0 | grep 'inet' | cut -d: -f2 | awk '{print $2}'"
+- name: "Get the lxdfan0 ipv4"
+  shell: "ifconfig lxdfan0 | grep 'inet' | cut -d: -f2 | awk '{print $2}'"
   register: ifconfig
 
-- name: Ensure /etc/systemd/network/mage-lxd.network is in place
+- name: "Ensure that the mage-lxd systemd network unit is in place"
   template:
     src: mage-lxd.network.j2
     dest: /etc/systemd/network/mage-lxd.network

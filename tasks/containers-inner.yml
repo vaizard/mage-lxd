@@ -3,14 +3,16 @@
 # renaming outer loop items
 - set_fact:
   args:
-    c_name: "{{ outer_item.name }}"
-    tmp_proxy: "{{ outer_item.proxy | default([]) }}"
-    tmp_devices: "{{ outer_item.devices | default([]) }}"
+    c_name: "{{ item.name }}"
+    tmp_proxy: "{{ item.proxy | default([]) }}"
+    tmp_devices: "{{ item.devices | default([]) }}"
 
 # converting the proxy list into devices-style dict
 - set_fact:
-    tmp_proxies: "{{ tmp_proxies|default({}) | combine( {item.name: { 'listen': item.proto + ':' + lxd_init_https_addr + ':' + item.dst|string, 'connect': item.proto + ':127.0.0.1:' + item.nxt|string, 'bind': 'host', 'type': 'proxy' } }, recursive=True ) }}"
+    tmp_proxies: "{{ tmp_proxies|default({}) | combine( {inner_item.name: { 'listen': inner_item.proto + ':' + lxd_init_https_addr + ':' + inner_item.dst|string, 'connect': inner_item.proto + ':127.0.0.1:' + inner_item.nxt|string, 'bind': 'host', 'type': 'proxy' } }, recursive=True ) }}"
   with_items: "{{ tmp_proxy }}"
+  loop_control:
+    loop_var: inner_item
 
 # merging together proxy devices with other devices
 - set_fact:
@@ -18,17 +20,42 @@
 
 - name: "Making sure lxd containers are present (create and start otherwise)"
   lxd_container:
-    name: "{{ outer_item.name }}"
+    name: "{{ item.name }}"
     state: started
     source:
       type: image
       mode: pull
-      server: "{{ outer_item.server | default(lxd_container_server) }}"
-      protocol: "{{ outer_item.protocol | default(lxd_container_protocol) }}"
-      alias: "{{ outer_item.image | default(lxd_container_alias) }}"
+      server: "{{ item.server | default(lxd_container_server) }}"
+      protocol: "{{ item.protocol | default(lxd_container_protocol) }}"
+      alias: "{{ item.image | default(lxd_container_alias) }}"
     url: 'unix:/var/snap/lxd/common/lxd/unix.socket'
     profiles: ["default"]
     devices: "{{ devices }}"
     wait_for_ipv4_addresses: true
     timeout: 600
+
+- name: "Ensure we can use the lxd connector on newly created containers"
+  local_action: add_host name="{{ item.name }}" ansible_connection=lxd ansible_become=false
+#  when: (item.name is defined and item.name|trim)
+
+- name: "Get container OS"
+  shell: "lxc exec {{ item.name }} -- cat /etc/os-release | grep '^ID=' | cut -c4- | sed -e 's/^\"//' -e 's/\"$//'"
+  register: os
+
+#- debug: var=os
+
+- shell: "lxc exec {{ item.name }} -- apt-get install -y python"
+  when: os.stdout == 'ubuntu'
+
+- shell: "lxc exec {{ item.name }} -- dnf install -y python python-simplejson python-dnf libselinux-python"
+  when: (os.stdout == 'fedora') or (os.stdout == 'centos') or (os.stdout == 'rhel') or (os.stdout == 'ol')
+
+- shell: "lxc exec {{ item.name }} -- emerge -u python gentoolkit"
+  when: os.stdout == 'gentoo'
+
+
+- name: "Update the inventory"
+  become: yes
+  lineinfile: path="{{ inventory_file }}" regexp="^{{ item.name }} ansible_connection=lxd" insertafter="^\[lxd\]" line="{{ item.name }} ansible_connection=lxd"
+  delegate_to: localhost
 

@@ -2,7 +2,9 @@
 
 # This task installs lxd locally (on the machine you run ansible from).
 # This is needed in order to allow ansible to use ansible's lxd connector
-# that enables to manage containers on remote hosts.
+# that enables to manage containers on remote hosts. See:
+#
+# `lxc remote list`
 
 - name: Ensure to have packaged lxd purged on localhost
   apt:
@@ -20,8 +22,17 @@
   become: true
   delegate_to: localhost
 
-- name: Ensure local lxd has required lxc remote configured (see `lxc remote list`)
-  exec: | 
-    lxc remote add {{ lxd_init_clust_name }} https://{{ lxd_init_https_addr }}:{{ lxd_init_https_port }} --protocol=lxd --password={{ lxd_init_trust_pass }}
+- name: Ensure local lxd has required lxc remote configured
+  expect:
+    command: "lxc remote add {{ lxd_init_clust_name }} https://{{ lxd_init_https_addr }}:{{ lxd_init_https_port }} --protocol=lxd --password={{ lxd_init_trust_pass }}"
+    responses:
+      ok: y
   become: true
   delegate_to: localhost
+  register: out
+  failed_when: out.stdout is not search('exists')
+  # This one's really fun. We need
+  # - the expect to reply "y" when adding a new remote
+  # - to fail when the registeredout.stdout doesn't contain the substring "exists",
+  #   because adding an already existing remote emits an error
+
