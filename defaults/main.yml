@@ -3,25 +3,12 @@
 lxd_snap_channel: edge
 lxd_snap_refresh: true
 lxd_init_run: false
-lxd_init_https_addr: 10.1.255.239
-lxd_init_https_port: 8443
-lxd_init_trust_pass: papapa
-lxd_init_clust_name: clu01
+lxd_init_https_addr: "{{ ansible_default_ipv4.address }}"
+lxd_init_https_port: ""
+lxd_init_trust_pass: ""
+lxd_init_clust_name: ""
 lxd_container_server: "ubuntu/bionic/amd64"
 lxd_container_protocol: "simplestreams"
 lxd_container_alias: "ubuntu/bionic/amd64"
 
-lxd_containers:
-  - name: "c1"
-    devices:
-      "conname1": { "listen": "tcp:192.168.88.102:8080", "connect": "tcp:127.0.0.1:8080", "bind":"host", "type": "proxy" }
-      "conname2": { "listen": "udp:192.168.88.102:22000-22300", "connect": "udp:127.0.0.1:22000-22300", "bind":"host", "type": "proxy" }
-    proxy: 
-      - { name: "pname1", dst: 1200, nxt: 1200, proto: tcp }
-      - { name: "pname2", dst: 1200, nxt: 1200, proto: udp }
-  - name: "c2"
-    devices:
-      conname3: { listen: "tcp:192.168.88.102:8085", connect: "tcp:127.0.0.1:8085", bind: "host", type: "proxy" }
-    proxy: 
-      - { name: "pname1", dst: 2200, nxt: 2200, proto: tcp }
-
+lxd_containers: []
