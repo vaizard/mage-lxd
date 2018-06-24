@@ -21,8 +21,8 @@ CAVEATS:
     lxd_init_https_addr: 10.1.2.1
     lxd_init_https_port: 8443
     lxd_init_trust_pass: my-super-secret-trustpass
-    lxd_init_clust_name: cluster01
-    lxd_container_server: "ubuntu/bionic/amd64"
+    lxd_init_clust_name: "{{ ansible_hostname }}"
+    lxd_container_server: "https://images.linuxcontainers.org"
     lxd_container_protocol: "simplestreams"
     lxd_container_alias: "ubuntu/bionic/amd64"
 

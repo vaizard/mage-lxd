@@ -4,9 +4,9 @@ lxd_snap_channel: edge
 lxd_snap_refresh: true
 lxd_init_run: false
 lxd_init_https_addr: "{{ ansible_default_ipv4.address }}"
-lxd_init_https_port: ""
+lxd_init_https_port: "8443"
 lxd_init_trust_pass: ""
-lxd_init_clust_name: ""
+lxd_init_clust_name: "{{ ansible_hostname }}"
 lxd_container_server: "ubuntu/bionic/amd64"
 lxd_container_protocol: "simplestreams"
 lxd_container_alias: "ubuntu/bionic/amd64"
