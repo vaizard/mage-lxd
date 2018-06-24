@@ -1,0 +1,27 @@
+---
+
+# This task installs lxd locally (on the machine you run ansible from).
+# This is needed in order to allow ansible to use ansible's lxd connector
+# that enables to manage containers on remote hosts.
+
+- name: Ensure to have packaged lxd purged on localhost
+  apt:
+    name: "{{ item }}"
+    purge: yes
+    state: absent
+  with_items:
+    - lxd
+    - lxd_client
+  become: true
+  delegate_to: localhost
+
+- name: Ensure lxd snap is installed on localhost
+  command: "snap install lxd"
+  become: true
+  delegate_to: localhost
+
+- name: Ensure local lxd has required lxc remote configured (see `lxc remote list`)
+  exec: | 
+    lxc remote add {{ lxd_init_clust_name }} https://{{ lxd_init_https_addr }}:{{ lxd_init_https_port }} --protocol=lxd --password={{ lxd_init_trust_pass }}
+  become: true
+  delegate_to: localhost

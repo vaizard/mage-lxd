@@ -1,0 +1,22 @@
+---
+
+#
+# This role REQUIRES the lxd snap to keep up with upstream.
+# Data and unix-socket paths are hardcoded accordingly.
+#
+# This role REQUIRES a local installation of LXD (on the machine
+# that you run ansible on). If you don't want to or can't use
+# the snap here, install lxd manually and skip the 'local' tag.
+#
+
+- include_tasks: "lxd-remote-install.yml"
+  tags: install
+- include_tasks: "lxd-remote-init.yml"
+  tags: configure
+- include_tasks: "lxd-remote-fan.yml"
+  tags: configure
+- include_tasks: "lxd-local.yml"
+  when: inventory_hostname != 'localhost'
+  tags: local
+- include_tasks: "containers-outer.yml"
+  tags: manage

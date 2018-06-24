@@ -1,0 +1,44 @@
+---
+
+- include_tasks: containers-inner.yml
+  with_items: "{{ lxd_containers }}"
+  loop_control:
+    loop_var: outer_item
+
+- name: "Ensure we can use the lxd connector on newly created containers"
+  local_action: add_host name="{{ item.name }}" ansible_connection=lxd ansible_become=false #inventory_dir="{{ inventory_dir }}"
+  with_items: "{{ lxd_containers }}"
+  when: (item.name is defined and item.name|trim)
+
+- name: "Ensure all containers have python installed"
+  delegate_to: "{{ item.name }}"
+  raw: |
+     case `cat /etc/os-release | grep '^ID=' | cut -c4- | sed -e 's/^\"//' -e 's/\"$//'` in 
+       ubuntu|debian)
+         [[ `dpkg -s python` ]] || apt-get install -y python
+         ;;
+       gentoo)
+         emerge -u python gentoolkit
+         ;;
+       fedora|centos|rhel|ol) 
+         PKGMNGR="yum"
+         [[ `type -t dnf` ]] && PKGMNGR="dnf"
+         [[ `rpm -qa python` ]] || $PKGMNGR install -y python python-simplejson
+         [[ `rpm -qa python-simplejson` ]] || $PKGMNGR install -y python-simplejson
+         [[ `type -t dnf` ]] && [[ `rpm -qa python-dnf` ]] || $PKGMNGR install -y python-dnf
+         ;;
+     esac
+  with_items: "{{ lxd_containers }}"
+  when: (item.name is defined and item.name|trim)
+
+- name: "Ensure we have a lxd group in the inventory"
+  become: yes
+  lineinfile: path="{{ inventory_file }}" line="[lxd]"
+
+- name: "Update the inventory"
+  become: yes
+  lineinfile: path="{{ inventory_file }}" regexp="^{{ item.name }} ansible_connection=lxd" insertafter="^\[lxd\]" line="{{ item.name }} ansible_connection=lxd"
+  with_items: "{{ lxd_containers }}"
+  when: (item.name is defined and item.name|trim)
+
+

@@ -1,0 +1,34 @@
+---
+
+# renaming outer loop items
+- set_fact:
+  args:
+    c_name: "{{ outer_item.name }}"
+    tmp_proxy: "{{ outer_item.proxy | default([]) }}"
+    tmp_devices: "{{ outer_item.devices | default([]) }}"
+
+# converting the proxy list into devices-style dict
+- set_fact:
+    tmp_proxies: "{{ tmp_proxies|default({}) | combine( {item.name: { 'listen': item.proto + ':' + lxd_init_https_addr + ':' + item.dst|string, 'connect': item.proto + ':127.0.0.1:' + item.nxt|string, 'bind': 'host', 'type': 'proxy' } }, recursive=True ) }}"
+  with_items: "{{ tmp_proxy }}"
+
+# merging together proxy devices with other devices
+- set_fact:
+    devices: "{{ tmp_devices | combine(tmp_proxies) }}"
+
+- name: "Making sure lxd containers are present (create and start otherwise)"
+  lxd_container:
+    name: "{{ outer_item.name }}"
+    state: started
+    source:
+      type: image
+      mode: pull
+      server: "{{ outer_item.server | default(lxd_container_server) }}"
+      protocol: "{{ outer_item.protocol | default(lxd_container_protocol) }}"
+      alias: "{{ outer_item.image | default(lxd_container_alias) }}"
+    url: 'unix:/var/snap/lxd/common/lxd/unix.socket'
+    profiles: ["default"]
+    devices: "{{ devices }}"
+    wait_for_ipv4_addresses: true
+    timeout: 600
+

@@ -1,0 +1,43 @@
+---
+
+- name: Ensure lxd is configured
+  shell: |
+    cat <<EOF | /snap/bin/lxd init --preseed
+    config:
+      core.https_address: {{ lxd_init_https_addr }}:{{ lxd_init_https_port }}
+      core.trust_password: {{ lxd_init_trust_pass }}
+    cluster:
+      server_name: {{ lxd_init_clust_name }}
+      enabled: true
+      cluster_address: ""
+      cluster_certificate: ""
+      cluster_password: ""
+    networks:
+    - config:
+        bridge.mode: fan
+      description: ""
+      managed: false
+      name: lxdfan0
+      type: ""
+    storage_pools:
+    - config:
+        source: /var/snap/lxd/common/lxd/storage-pools/local
+      description: ""
+      name: local
+      driver: btrfs
+    profiles:
+    - config: {}
+      description: ""
+      devices:
+        eth0:
+          name: eth0
+          nictype: bridged
+          parent: lxdfan0
+          type: nic
+        root:
+          path: /
+          pool: local
+          type: disk
+          name: default
+    EOF
+  when: "('error: no matching snaps installed' in snap_list.stderr) or (lxd_init_run == true)"

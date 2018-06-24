@@ -1,0 +1,30 @@
+---
+
+# Use `containername.lxd`-style hostnames for container<->ip resolution.
+# Needed if you want this to work:
+#
+# lxc launch c1 ubuntu:18.04
+# ping c1.lxd
+#
+# The gist is to add the gateway ip of the lxdfan0 interface to lxd host's
+# nameservers for all ns requests on the ip range assigned to the lxdfan0.
+# The idea comes from: https://blog.simos.info/how-to-use-lxd-container-hostnames-on-the-host-in-ubuntu-18-04/
+#
+# KNOWN ISSUES:
+# Ubuntu's default systemd-resolved doesn't play nice with the dnsmasq used
+# by the lxd snap. As a result, after reboot, lxd will start properly after
+# a 600s timeout of god knows what. See https://github.com/lxc/lxd/issues/4631
+# for a more detailed description.
+
+- name: Get the lxdfan0 ipv4
+  command: "ifconfig lxdfan0 | grep 'inet' | cut -d: -f2 | awk '{print $2}'"
+  register: ifconfig
+
+- name: Ensure /etc/systemd/network/mage-lxd.network is in place
+  template:
+    src: mage-lxd.network.j2
+    dest: /etc/systemd/network/mage-lxd.network
+    owner: root
+    group: root
+    mode: 0644
+

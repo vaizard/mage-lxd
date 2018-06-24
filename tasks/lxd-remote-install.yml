@@ -1,0 +1,36 @@
+---
+
+- name: Ensure to have packaged lxd purged
+  apt:
+    name: "{{ item }}"
+    purge: yes
+    state: absent
+  with_items:
+    - lxd
+    - lxd_client
+
+- name: Ensure that the lxd group exists
+  group:
+    name: lxd
+    state: present
+
+- name: Test if lxd snap is installed
+  command: "snap list lxd"
+  register: snap_list
+  failed_when: snap_list.msg is defined and snap_list.msg == "[Errno 2] No such file or directory"
+
+- name: Test if correct lxd snap channel is tracked
+  shell: "snap info lxd | grep tracking | awk '{print $2}'"
+  register: snap_channel
+
+- name: Ensure lxd snap is installed
+  command: "snap install lxd"
+  when: "'error: no matching snaps installed' in snap_list.stderr"
+
+- name: Ensure the propper channel is tracked
+  command: "snap switch lxd --channel={{ lxd_snap_channel }}"
+  when: snap_channel.stdout != lxd_snap_channel
+
+- name: Ensure the propper channel is tracked and snap refreshed
+  command: snap refresh lxd
+  when: (snap_channel.stdout != lxd_snap_channel) or (lxd_snap_refresh == true)
