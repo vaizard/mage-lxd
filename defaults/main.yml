@@ -3,6 +3,7 @@
 lxd_snap_channel: edge
 lxd_snap_refresh: true
 lxd_init_run: false
+lxd_init_storage: btrfs
 lxd_init_https_addr: "{{ ansible_default_ipv4.address }}"
 lxd_init_https_port: "8443"
 lxd_init_trust_pass: ""

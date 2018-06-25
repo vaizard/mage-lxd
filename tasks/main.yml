@@ -16,7 +16,7 @@
 - include_tasks: "lxd-remote-fan.yml"
   tags: configure
 - include_tasks: "lxd-local.yml"
-  when: inventory_hostname != 'localhost'
   tags: local
+  when: inventory_hostname != 'localhost'
 - include_tasks: "containers-outer.yml"
   tags: manage

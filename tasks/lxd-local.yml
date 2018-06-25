@@ -13,7 +13,7 @@
     state: absent
   with_items:
     - lxd
-    - lxd_client
+    - lxd-client
   become: true
   delegate_to: localhost
 
@@ -31,6 +31,7 @@
   delegate_to: localhost
   register: out
   failed_when: out.stdout is not search('exists')
+  ignore_errors: True
   # This one's really fun. We need
   # - the expect to reply "y" when adding a new remote
   # - to fail when the registeredout.stdout doesn't contain the substring "exists",
