@@ -7,5 +7,5 @@
 
 - include_tasks: containers-inner.yml
   with_items: "{{ lxd_containers }}"
-#  when: (item.name is defined and item.name|trim)
+
 

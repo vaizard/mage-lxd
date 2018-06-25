@@ -34,6 +34,9 @@
   ignore_errors: True
   # This one's really fun. We need
   # - the expect to reply "y" when adding a new remote
-  # - to fail when the registeredout.stdout doesn't contain the substring "exists",
+  # - to fail when the registered out.stdout doesn't contain the substring "exists",
   #   because adding an already existing remote emits an error
+  # - the ignore_errors becuse I can't make myself to add a logical or to the 
+  #   failed_when to cover the case when the remote is successfully added
+  
 
