@@ -7,7 +7,7 @@
     state: absent
   with_items:
     - lxd
-    - lxd_client
+    - lxd-client
 
 - name: Ensure that the lxd group exists
   group:

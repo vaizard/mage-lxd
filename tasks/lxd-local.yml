@@ -23,20 +23,8 @@
   delegate_to: localhost
 
 - name: Ensure local lxd has required lxc remote configured
-  expect:
-    command: "lxc remote add {{ lxd_init_clust_name }} https://{{ lxd_init_https_addr }}:{{ lxd_init_https_port }} --protocol=lxd --password={{ lxd_init_trust_pass }}"
-    responses:
-      ok: y
-  become: true
-  delegate_to: localhost
+  command: "lxc remote add {{ lxd_init_clust_name }} https://{{ lxd_init_https_addr }}:{{ lxd_init_https_port }} --protocol=lxd --password={{ lxd_init_trust_pass }} --accept-certificate"
   register: out
-  failed_when: out.stdout is not search('exists')
-  ignore_errors: True
-  # This one's really fun. We need
-  # - the expect to reply "y" when adding a new remote
-  # - to fail when the registered out.stdout doesn't contain the substring "exists",
-  #   because adding an already existing remote emits an error
-  # - the ignore_errors becuse I can't make myself to add a logical or to the 
-  #   failed_when to cover the case when the remote is successfully added
-  
+  failed_when: out.stderr is defined and out.stderr is not search('exists')
+
 
