@@ -11,9 +11,7 @@
     name: "{{ item }}"
     purge: yes
     state: absent
-  with_items:
-    - lxd
-    - lxd-client
+  with_items: "{{ lxd_purge }}"
   become: true
   delegate_to: localhost
 
@@ -26,5 +24,6 @@
   command: "lxc remote add {{ lxd_init_clust_name }} https://{{ lxd_init_https_addr }}:{{ lxd_init_https_port }} --protocol=lxd --password={{ lxd_init_trust_pass }} --accept-certificate"
   register: out
   failed_when: out.stderr is defined and out.stderr is not search('exists')
+  become: true
 
 

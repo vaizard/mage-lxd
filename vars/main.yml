@@ -1,0 +1,10 @@
+---
+
+lxd_interface: lxdfan0
+lxd_svcname: snap.lxd.daemon.service
+lxd_purge:
+  - lxd
+  - lxd-client
+  - lxcfs
+  - liblxc1
+

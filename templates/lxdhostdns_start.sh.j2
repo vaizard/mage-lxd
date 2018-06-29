@@ -1,0 +1,11 @@
+#!/bin/sh
+
+sleep {{ lxd_dns_start_delay }}
+
+LXDINTERFACE={{ lxd_interface }}
+LXDDOMAIN=lxd
+LXDDNSIP=`ip addr show {{ lxd_interface }} | grep -Po 'inet \K[\d.]+'`
+
+/usr/bin/systemd-resolve --interface ${LXDINTERFACE} \
+                         --set-dns ${LXDDNSIP} \
+                         --set-domain ${LXDDOMAIN}

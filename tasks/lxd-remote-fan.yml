@@ -16,14 +16,31 @@
 # a 600s timeout of god knows what. See https://github.com/lxc/lxd/issues/4631
 # for a more detailed description.
 
-- name: "Get the lxdfan0 ipv4"
-  shell: "ifconfig lxdfan0 | grep 'inet' | cut -d: -f2 | awk '{print $2}'"
-  register: ifconfig
-
-- name: "Ensure that the mage-lxd systemd network unit is in place"
+- name: "Ensure that the lxdhostdns_start script is in place"
   template:
-    src: mage-lxd.network.j2
-    dest: /etc/systemd/network/mage-lxd.network
+    src: lxdhostdns_start.sh.j2
+    dest: /usr/local/bin/lxdhostdns_start.sh
+    owner: root
+    group: root
+    mode: 0755
+
+- name: "Ensure that the lxdhostdns_start stop is in place"
+  template:
+    src: lxdhostdns_stop.sh.j2
+    dest: /usr/local/bin/lxdhostdns_stop.sh
+    owner: root
+    group: root
+    mode: 0755
+
+- name: "Ensure that we have the /etc/systemd/system/snap.lxd.daemon.service.d directory"
+  file: 
+    path: /etc/systemd/system/snap.lxd.daemon.service.d
+    state: directory
+
+- name: "Ensure that snap.lxd.daemon.service unit modifications are installed"
+  template:
+    src: snap.lxd.service-mage.j2
+    dest: /etc/systemd/system/snap.lxd.daemon.service.d/mage.conf
     owner: root
     group: root
     mode: 0644

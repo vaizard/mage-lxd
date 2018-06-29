@@ -1,0 +1,5 @@
+#!/bin/sh
+
+LXDINTERFACE={{ lxd_interface }}
+
+/usr/bin/systemd-resolve --interface ${LXDINTERFACE} --revert
