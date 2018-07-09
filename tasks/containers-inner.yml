@@ -39,23 +39,23 @@
 #  when: (item.name is defined and item.name|trim)
 
 - name: "Get container OS"
-  shell: "lxc exec {{ item.name }} -- cat /etc/os-release | grep '^ID=' | cut -c4- | sed -e 's/^\"//' -e 's/\"$//'"
+  shell: "/snap/bin/lxc exec {{ item.name }} -- cat /etc/os-release | grep '^ID=' | cut -c4- | sed -e 's/^\"//' -e 's/\"$//'"
   register: os
 
 #- debug: var=os
 
-- shell: "lxc exec {{ item.name }} -- apt-get install -y python"
+- shell: "/snap/bin/lxc exec {{ item.name }} -- apt-get install -y python"
   when: os.stdout == 'ubuntu'
 
-- shell: "lxc exec {{ item.name }} -- dnf install -y python python-simplejson python-dnf libselinux-python"
+- shell: "/snap/bin/lxc exec {{ item.name }} -- dnf install -y python python-simplejson python-dnf libselinux-python"
   when: (os.stdout == 'fedora') or (os.stdout == 'centos') or (os.stdout == 'rhel') or (os.stdout == 'ol')
 
-- shell: "lxc exec {{ item.name }} -- emerge -u python gentoolkit"
+- shell: "/snap/bin/lxc exec {{ item.name }} -- emerge -u python gentoolkit"
   when: os.stdout == 'gentoo'
 
 
 - name: "Update the inventory"
   become: yes
-  lineinfile: path="{{ inventory_file }}" regexp="^{{ item.name }} ansible_connection=lxd ansible_host={{ ansible_host | replace('127.0.0.1','local') | replace('localhost','local') }}:{{ item.name }}" insertafter="^\[lxd\]" line="{{ item.name }} ansible_connection=lxd ansible_host={{ ansible_host | replace('127.0.0.1','local') | replace('localhost','local') }}:{{ item.name }}"
+  lineinfile: path="{{ inventory_file }}" regexp="^{{ item.name }} ansible_connection=lxd ansible_host={{ inventory_hostname | replace('127.0.0.1','local') | replace('localhost','local') }}:{{ item.name }}" insertafter="^\[lxd\]" line="{{ item.name }} ansible_connection=lxd ansible_host={{ inventory_hostname | replace('127.0.0.1','local') | replace('localhost','local') }}:{{ item.name }}"
   delegate_to: localhost
 
