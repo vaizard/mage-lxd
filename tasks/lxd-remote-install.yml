@@ -32,3 +32,9 @@
 - name: Ensure the propper channel is tracked and snap refreshed
   command: snap refresh lxd
   when: (snap_channel.stdout != lxd_snap_channel) or (lxd_snap_refresh == true)
+
+- name: "Ensure /etc/sysctl.d/99-lxd.conf is set"
+  template: 
+    src: sysctl-lxd.conf.j2
+    dest: /etc/sysctl.d/99-lxd.conf
+    mode: 0644

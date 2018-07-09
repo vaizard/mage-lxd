@@ -6,7 +6,7 @@ CAVEATS:
 
 - To keep up with the most recent lxd releases, this role is intentionally hardcoded to use snaps (instead of the packaged version). This is ok for us, becuse we use Ubuntu exclusively for LXD hosts. If anyone feels like adding support for system-packaged lxd, just commit a PR.
 - This role is hardcoded for clustering (can be easily disabled) and thus uses Ubuntu's fan networking (which is currently hardcoded). Using bridged networking should be an easy fix, if you'd like to send a PR.
-- In order to use ansible's lxd connector, you must have lxd installed on the machine you run ansible on. For that reason, the lxd-local.yml installs the lxd snap. If you don't want to use snap, just skip the local tag and install lxd manually.
+- In order to use ansible's lxd connector, you must have lxd installed on the machine you run ansible on. For that reason, running `ansible-playbook my-lxd-playbook.yml -k` with the `-k` switch is **mandatory**!
 - This role has been tested exclusively on Ubuntu 18.04. Newer releases should work just fine, older probably won't work at all.
 - This role must have the `{{ inventory_file }}` variable defined, as the containers-outer.yml task adds created lxd containers to the inventory file. As recent Ansible doesn't have this variable defined at runtime, you must set it manually here.
 

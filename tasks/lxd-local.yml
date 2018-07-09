@@ -16,14 +16,24 @@
   delegate_to: localhost
 
 - name: Ensure lxd snap is installed on localhost
-  command: "snap install lxd"
-  become: true
+  command: "/usr/bin/snap install lxd"
   delegate_to: localhost
+  become: true
 
-- name: Ensure local lxd has required lxc remote configured
-  command: "lxc remote add {{ lxd_init_clust_name }} https://{{ lxd_init_https_addr }}:{{ lxd_init_https_port }} --protocol=lxd --password={{ lxd_init_trust_pass }} --accept-certificate"
+- name: "Ensure local lxd has required lxc remote configured for user: {{ ansible_user_id }}"
+  command: "/snap/bin/lxc remote add {{ lxd_init_clust_name }} https://{{ lxd_init_https_addr }}:{{ lxd_init_https_port }} --protocol=lxd --password={{ lxd_init_trust_pass }} --accept-certificate"
   register: out
+  ignore_errors: yes
   failed_when: out.stderr is defined and out.stderr is not search('exists')
+  delegate_to: localhost
+  become: "{{ ansible_user_id }}"
+
+- name: "Ensure local lxd has required lxc remote configured for user: root"
+  command: "/snap/bin/lxc remote add {{ lxd_init_clust_name }} https://{{ lxd_init_https_addr }}:{{ lxd_init_https_port }} --protocol=lxd --password={{ lxd_init_trust_pass }} --accept-certificate"
+  register: out
+  ignore_errors: yes
+  failed_when: out.stderr is defined and out.stderr is not search('exists')
+  delegate_to: localhost
   become: true
 
 
