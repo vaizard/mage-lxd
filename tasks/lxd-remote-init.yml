@@ -13,6 +13,9 @@
   shell: "cat /root/mage-lxd-init.yaml.tmp | /snap/bin/lxd init --preseed"
   when: "('error: no matching snaps installed' in snap_list.stderr) or (lxd_init_run == true)"
 
+- pause:
+    seconds: 1
+
 - file:
     path: /root/mage-lxd-init.yaml.tmp
     state: absent

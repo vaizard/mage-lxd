@@ -18,6 +18,8 @@ CAVEATS:
     lxd_snap_channel: edge
     lxd_snap_refresh: true
     lxd_init_run: false
+    lxd_init_https_remote_addr: 44.144.244.4
+    lxd_init_https_remote_port: 8443
     lxd_init_https_addr: 10.1.2.1
     lxd_init_https_port: 8443
     lxd_init_trust_pass: my-super-secret-trustpass

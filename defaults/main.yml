@@ -8,6 +8,8 @@ lxd_init_https_addr: "{{ ansible_default_ipv4.address }}"
 lxd_init_https_port: "8443"
 lxd_init_trust_pass: ""
 lxd_init_clust_name: "{{ ansible_hostname }}"
+lxd_init_https_remote_addr: "{{ lxd_init_https_addr }}" # set to gw ip
+lxd_init_https_remote_port: "{{ lxd_init_https_port }}" # set to external port forwarded to lxd_init_https_port
 lxd_container_server: "https://images.linuxcontainers.org"
 lxd_container_protocol: "simplestreams"
 lxd_container_alias: "ubuntu/bionic/amd64"
