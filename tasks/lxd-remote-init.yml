@@ -9,6 +9,9 @@
     group: root
     mode: 0400
 
+- pause:
+    seconds: 5
+
 - name: Ensure lxd is configured
   shell: "cat /root/mage-lxd-init.yaml.tmp | /snap/bin/lxd init --preseed"
   when: "('error: no matching snaps installed' in snap_list.stderr) or (lxd_init_run == true)"

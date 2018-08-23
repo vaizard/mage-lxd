@@ -6,6 +6,7 @@
     c_name: "{{ item.name }}"
     tmp_proxy: "{{ item.proxy | default([]) }}"
     tmp_devices: "{{ item.devices | default([]) }}"
+    tmp_proxies: {} # needed here so that we start with a clean tmp_proxies on every inner loop
 
 # converting the proxy list into devices-style dict
 - set_fact:
