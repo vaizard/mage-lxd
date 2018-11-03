@@ -1,6 +1,6 @@
 ---
 
-lxd_snap_channel: edge
+lxd_snap_channel: stable
 lxd_snap_refresh: true
 lxd_init_run: false
 lxd_init_storage: btrfs
