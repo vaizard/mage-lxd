@@ -32,6 +32,7 @@
     url: 'unix:/var/snap/lxd/common/lxd/unix.socket'
     profiles: ["default"]
     devices: "{{ devices }}"
+    config: "{{ item.config | default({}) }}"
     wait_for_ipv4_addresses: true
     timeout: 600
 

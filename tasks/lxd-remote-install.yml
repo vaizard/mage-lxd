@@ -2,10 +2,9 @@
 
 - name: Ensure to have packaged lxd purged
   apt:
-    name: "{{ item }}"
+    name: "{{ lxd_purge }}"
     purge: yes
     state: absent
-  with_items: "{{ lxd_purge }}"
 
 - name: Ensure that the lxd group exists
   group:

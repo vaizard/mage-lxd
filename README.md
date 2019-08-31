@@ -36,6 +36,7 @@ CAVEATS:
       proxy: 
         - { name: "https", dst: 443, nxt: 443, proto: tcp }
         - { name: "ftpsrange", dst: 12000-12500, nxt: 12000-12500, proto: udp }
+      config: { "security.nesting": "true" }
     - name: "c2"
       image: "fedora/27"
       proxy: 

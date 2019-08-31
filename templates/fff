@@ -5,16 +5,13 @@ config:
   core.trust_password: {{ lxd_init_trust_pass }}
 cluster:
   server_name: {{ lxd_init_clust_name }}
-  server_address: ""
   enabled: true
-  member_config: []
   cluster_address: ""
   cluster_certificate: ""
   cluster_password: ""
 networks:
 - config:
     bridge.mode: fan
-    fan.underlay_subnet: auto
   description: ""
   managed: false
   name: lxdfan0

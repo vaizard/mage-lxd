@@ -8,10 +8,9 @@
 
 - name: Ensure to have packaged lxd purged on localhost
   apt:
-    name: "{{ item }}"
+    name: "{{ lxd_purge }}"
     purge: yes
     state: absent
-  with_items: "{{ lxd_purge }}"
   become: true
   delegate_to: localhost
 
