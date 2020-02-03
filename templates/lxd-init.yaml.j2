@@ -14,7 +14,7 @@ cluster:
 networks:
 - config:
     bridge.mode: fan
-    fan.underlay_subnet: auto
+    fan.underlay_subnet: {{ lxd_fan_underlay_subnet | default('auto') }}
   description: ""
   managed: false
   name: lxdfan0

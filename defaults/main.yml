@@ -15,5 +15,6 @@ lxd_container_protocol: "simplestreams"
 lxd_container_alias: "ubuntu/bionic/amd64"
 lxd_svc_start_delay: 20
 lxd_dns_start_delay: 15
+lxd_fan_underlay_subnet: "auto" # if encountering problems set attcording to lxd_init_https_addr with /16 mask, i.e. for 200.1.2.40 -> 200.1.0.0/16
 
 lxd_containers: []
