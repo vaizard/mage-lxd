@@ -34,7 +34,7 @@
     devices: "{{ devices }}"
     config: "{{ item.config | default({}) }}"
     wait_for_ipv4_addresses: true
-    timeout: 600
+    timeout: 360
 
 - name: "Ensure we can use the lxd connector on newly created containers"
   local_action: add_host name="{{ item.name }}" ansible_connection=lxd ansible_become=false

@@ -53,3 +53,6 @@ TIPS:
 - The `lxd_containers.item.devices` can be used to configure **any** lxd device. Since the most common device
   we use is the proxy device, we also add `lxd_containers.item.proxy`, than allows a well readable configuration,
   that can also be used by our mikrotik/firewall roles to properly configure portforwarding.
+- Does the container creation time-out for you? I noticed this can happen
+  - on a slow internet connection where it just takes too much time to download the container (rerunning the role should help)
+  - on an underresourced host (i.e. unsquashfs can take lots of time on resources strained systems)
