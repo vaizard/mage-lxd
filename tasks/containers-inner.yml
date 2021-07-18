@@ -46,15 +46,17 @@
 
 #- debug: var=os
 
-- shell: "/snap/bin/lxc exec {{ item.name }} -- apt-get install -y python"
+- shell: "/snap/bin/lxc exec {{ item.name }} -- apt-get install -y python3"
   when: os.stdout == 'ubuntu'
+  ignore_errors: yes
 
-- shell: "/snap/bin/lxc exec {{ item.name }} -- dnf install -y python python-simplejson python-dnf libselinux-python"
+- shell: "/snap/bin/lxc exec {{ item.name }} -- dnf install -y python3 python3-simplejson python3-dnf libselinux-python3"
   when: (os.stdout == 'fedora') or (os.stdout == 'centos') or (os.stdout == 'rhel') or (os.stdout == 'ol')
+  ignore_errors: yes
 
 - shell: "/snap/bin/lxc exec {{ item.name }} -- emerge -u python gentoolkit"
   when: os.stdout == 'gentoo'
-
+  ignore_errors: yes
 
 - name: "Update the inventory"
   become: yes

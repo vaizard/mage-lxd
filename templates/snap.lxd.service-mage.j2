@@ -1,4 +1,4 @@
 [Service]
 ExecStartPre=/bin/sleep {{ lxd_svc_start_delay }}
 ExecStartPost=/usr/local/bin/lxdhostdns_start.sh
-ExecStopPre=/usr/local/bin/lxdhostdns_stop.sh
+ExecStop=/usr/local/bin/lxdhostdns_stop.sh
